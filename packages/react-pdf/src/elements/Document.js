@@ -3,14 +3,20 @@ import Font from './Font';
 import { pdfDictionary } from '../utils/pdf';
 
 class Document {
-  constructor(props) {
+  constructor() {
     this.nodes = [];
+    this.props = null;
+
     this.header = '%PDF-1.7\n%����\n';
     this.offset = this.header.length;
 
     this.font = new Font(null, this);
-    this.catalog = new Catalog(props, this);
+    this.catalog = new Catalog(null, this);
     this.catalog.parent = this;
+  }
+
+  setProps(props) {
+    this.props = props;
   }
 
   appendChild(child) {
@@ -37,10 +43,11 @@ class Document {
   }
 
   renderReferenceTable() {
-    const references = this.nodes
-      .sort((a, b) => a.id > b.id)
-      .map(this.renderReferenceEntry)
-      .join('\n') + '\n';
+    const references =
+      this.nodes
+        .sort((a, b) => a.id > b.id)
+        .map(this.renderReferenceEntry)
+        .join('\n') + '\n';
 
     return [
       'xref',
